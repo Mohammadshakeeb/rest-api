@@ -1,0 +1,17 @@
+# tutorial/public/.htaccess
+
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond   %{REQUEST_FILENAME} !-d
+#     RewriteCond   %{REQUEST_FILENAME} !-f
+#     RewriteRule   ^((?s).*)$ /app/index.php?_url=/$1 [QSA,L]
+# </IfModule>
+
+# tutorial/.htaccess
+# dfsdfdfd
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteBase /
+    RewriteRule   ^$ public/    [L]
+    RewriteRule   ((?s).*) app/$1 [L]
+</IfModule>
