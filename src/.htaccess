@@ -13,5 +13,5 @@
     RewriteEngine on
     RewriteBase /
     RewriteRule   ^$ public/    [L]
-    RewriteRule   ((?s).*) app/$1 [L]
+    RewriteRule   ((?s).*) api/$1 [L]
 </IfModule>

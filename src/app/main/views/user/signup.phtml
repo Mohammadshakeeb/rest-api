@@ -1,0 +1,45 @@
+
+<h2>Sign up using this form</h2>
+
+<?php 
+    if(isset($message)){
+        echo $message;
+    }
+?>
+<?php echo $this->tag->form(""); ?>
+
+    <p>
+        <label for="name">Name</label>
+        <?php echo $this->tag->textField("name"); ?>
+    </p>
+
+    <p>
+        <label for="email">E-Mail</label>
+        <?php echo $this->tag->textField("email"); ?>
+    </p>
+
+    <p>
+        <label for="email">Password</label>
+        <?php echo $this->tag->textField("password"); ?>
+    </p>
+
+    <p>
+        <?php echo $this->tag->submitButton("Register"); ?>
+    </p>
+
+</form>
+<?php 
+echo $this->tag->linkTo("user/login","Click here to Login");
+?>
+
+
+
+
+
+
+
+
+
+ 
+
+
