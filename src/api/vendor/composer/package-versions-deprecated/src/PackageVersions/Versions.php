@@ -35,10 +35,18 @@ final class Versions
     const VERSIONS          = array (
   'composer/package-versions-deprecated' => '1.11.99.5@b4f54f74ef3453349c24a845d22392cd31e65f1d',
   'firebase/php-jwt' => 'v6.1.1@e67638d067a537731e3f9c03e097c7c1b1f31fe8',
+  'guzzlehttp/guzzle' => '7.4.2@ac1ec1cd9b5624694c3a40be801d94137afb12b4',
+  'guzzlehttp/promises' => '1.5.1@fe752aedc9fd8fcca3fe7ad05d419d32998a06da',
+  'guzzlehttp/psr7' => '2.2.1@c94a94f120803a18554c1805ef2e539f8285f9a2',
   'jean85/pretty-package-versions' => '1.6.0@1e0104b46f045868f11942aea058cd7186d6c303',
   'mongodb/mongodb' => '1.12.0@e4a7594ac4b31635fa77455c4038a7013024ba28',
+  'psr/http-client' => '1.0.1@2dfb5f6c5eff0e91e20e913f8c5452ed95b86621',
+  'psr/http-factory' => '1.0.1@12ac7fcd07e5b077433f5f2bee95b3a771bf61be',
+  'psr/http-message' => '1.0.1@f6561bf28d520154e4b0ec72be95418abe6d9363',
+  'ralouphie/getallheaders' => '3.0.3@120b605dfeb996808c31b6477290a714d356e822',
+  'symfony/deprecation-contracts' => 'v3.0.1@26954b3d62a6c5fd0ea8a2a00c0353a14978d05c',
   'symfony/polyfill-php80' => 'v1.25.0@4407588e0d3f1f52efb65fbe92babe41f37fe50c',
-  '__root__' => 'dev-main@add3ba1b2aa5424786c0fc3b121b16a63753651e',
+  '__root__' => 'dev-part-2@b9e0ea1473b840dfecf5a0155134edcebf092348',
 );
 
     private function __construct()

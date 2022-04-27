@@ -15,6 +15,8 @@ use Phalcon\Session\Adapter\Stream;
 use Phalcon\Http\Response\Cookies;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Micro;
+use Phalcon\Events\Event;
+use Phalcon\Events\Manager as EventsManager;
 
 
 // require_once("../app/vendor/autoload.php");
@@ -35,13 +37,15 @@ $loader = new Loader();
 $loader->registerNamespaces(
     [
 
-        'App\Handler' => '../api/handlers'
+        'App\Handler' => '../api/handlers',
+        'App\Listeners' => APP_PATH . '/components'
     ]
 );
 
 $loader->register();
 
 $container = new FactoryDefault();
+$app = new Micro($container);
 
 $container->set(
     'mongo',
@@ -89,10 +93,19 @@ $container->set(
     }
 );
 
+$eventManager = new EventsManager();
+$eventManager->attach(
+    'myevent',
+    new \App\Listeners\NotificationsListeners()
+);
 
-$application = new Application($container);
+$container->set(
+    'eventManager',
+    $eventManager
+);
 
-$app = new Micro($container);
+// $application = new Application($container);
+
 
 
 $app->before(
@@ -118,7 +131,7 @@ $app->before(
 );
 
 $app->get(
-    '/products/gettoken',
+    '/api/products/gettoken',
     function () use ($app) {
 
         $key = "example_key";
@@ -136,7 +149,7 @@ $app->get(
 );
 
 $app->get(
-    '/products/search/{keyword}',
+    '/api/products/search/{keyword}',
     function ($keyword) use ($app) {
         $key = "example_key";
         // $decoded = JWT::decode($token, new Key($key, 'HS256'));
@@ -150,7 +163,7 @@ $app->get(
         // die($token);
         $result = "";
         foreach ($keyword as $k => $val) {
-            $info = $app->mongo->find(
+            $info = $app->mongo->products->find(
                 [
                     '$or' => [
                         ['name' => ['$regex' => $val]],
@@ -169,7 +182,7 @@ $app->get(
 );
 
 $app->post(
-    '/order/create',
+    '/api/order/create',
     function () use ($app) {
         $token = $this->request->getQuery('token');
         $key = 'example_key';
@@ -193,10 +206,24 @@ $app->post(
             $id = strval($user->_id);
             echo "Order placed successfully ";
             echo "Order Id is: " . $id;
+            $update = $this->mongo->products->findOne(["_id" => new MongoDB\BSON\ObjectId($body['product_id'])]);
+            // print_r($update);
+            // die;
+            $stock = $update->stock - $data['quantity'];
+            // echo $stock;
+            // die;
+            $array = array(
+                'stock' => $stock,
+                'product_id' => $data['product_id']
+            );
+            $update = $this->mongo->products->updateOne(["_id" => new MongoDB\BSON\ObjectId($body['product_id'])], ['$set' => ['stock' => $stock]]);
+            $eventmanager = $this->di->get('eventManager');
+            $array = $eventmanager->fire('myevent:updateProductStock', $this, $array);
+            echo "after event fire";
 
             //  echo $id;
             // print_r($user);
-            die;
+            // die;
         } else {
             echo "Invalid Parameters";
         }
@@ -204,23 +231,27 @@ $app->post(
 );
 
 $app->put(
-    '/order/update',
+    '/api/order/update',
     function () use ($app) {
         if ($this->request->isput()) {
 
             $updatedstatus = $this->request->getput('status');
             $id = $this->request->getPut('id');
-            // echo $updatedstatus;
             $orders = $this->mongo->orders->findOne(["_id" => new MongoDB\BSON\ObjectId($id)]);
-            // print_r($orders);
             if (isset($orders)) {
                 $this->mongo->orders->updateOne(["_id" => new MongoDB\BSON\ObjectId($id)], ['$set' => ['status' => $updatedstatus]]);
                 echo "order status updated successfully";
+                $array = array(
+                    'status' => $updatedstatus,
+                    'id' => $id
+                );
+                $eventmanager = $this->di->get('eventManager');
+                $array = $eventmanager->fire('myevent:updateStatus', $this, $array);
             } else {
                 echo "order does not exists";
+            }
         }
     }
-}
 );
 
 $app->notFound(function () use ($app) {
